@@ -1,11 +1,11 @@
 users = []
-last_id = User.last.id || 0
+last_id = User.maximum(:id) || 0
 1000.times do |num|
-  user_id = last_id + num + 1
+  num_inc = last_id + num + 1
   user_data = {
-    name: "Saleh #{user_id}",
-    email: "saleh#{user_id}@gmail.com",
-    phone: "999#{user_id}",
+    name: "Saleh #{num_inc}",
+    email: "saleh#{num_inc}@gmail.com",
+    phone: "999#{num_inc}",
     status: [:active, :inactive].sample
   }
   users << user_data
