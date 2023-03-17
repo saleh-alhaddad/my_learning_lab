@@ -1,0 +1,44 @@
+name: SimpleCov CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Deploy Coverage Report
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./coverage
+        publish_branch: gh-pages
+
+    - name: Copy coverage report to workspace
+      run: |
+        mkdir -p coverage
+        cp -r tmp/capybara coverage/ || true
+        cp -r coverage coverage-tmp || true
+        rm -rf coverage || true
+        mv coverage-tmp coverage || true
+      if: always()
+
+    - name: Deploy Coverage Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: Code Coverage
+        path: coverage
+
+    - name: Show Coverage Report
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        repository: ${{ github.repository }}
+        path: coverage
+    - name: Open Coverage Report
+      run: |
+        echo "Coverage report: https://${{ github.repository }}/coverage/index.html"
